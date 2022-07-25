@@ -1,10 +1,10 @@
-# frozen_string_literal: true
-
 alphabet = {}
 num = 0
 
 ('a'..'z').each do |i|
-  alphabet[i] = num
+  if 'aeiou'.include?(i) 
+    alphabet[i] = num
+  end
   num += 1
 end
 

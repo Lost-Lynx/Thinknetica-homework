@@ -6,14 +6,14 @@ loop do
   puts '3 - Показать итоговую сумму товаров в корзине'
   menu_value = gets.chomp.to_i
 
-  if menu_value == 0
+  case menu_value
+  when 0
     break
-  elsif menu_value == 1
+  when 1
     loop do
       puts 'Введите название товара: '
       product_name = gets.chomp
       break if product_name == 'Стоп' || product_name == 'стоп'
-
       puts 'Введите цену за единицу: '
       product_price = gets.chomp.to_f
       puts 'Введите количество товара: '
@@ -23,7 +23,7 @@ loop do
       puts 'Товар успешно добавлен'
       puts "Введите далее 'Стоп' для завершения добавления товаров"
     end
-  elsif menu_value == 2
+  when 2
     puts products
     products.each do |name, values|
       sum = 0
@@ -32,7 +32,7 @@ loop do
       end
       puts "Итоговая цена '#{name}': #{sum}"
     end
-  elsif menu_value == 3
+  when 3
     sum = 0
     products.each do |_name, values|
       values.each do |count, price|
