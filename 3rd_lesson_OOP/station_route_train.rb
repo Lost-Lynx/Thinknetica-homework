@@ -4,17 +4,19 @@ class Station
 
   def initialize(name)
     @name = name
-    @trains = {}
+    @trains = []
   end
 
   def trains_list
-    puts trains
+    trains.each do |train|
+      puts train.number
+    end
   end
 
   def trains_type_count(type)
-    trains.each do |name, train_type|
-      puts name if type == train_type
-    end if trains.include?(type)
+    trains.each do |train|
+      puts train.number if type == train.type
+    end
   end
 
   def remove_train(train)
@@ -22,8 +24,8 @@ class Station
     puts "Поезд ушел со станции #{@name}"
   end
 
-  def get_train(train, type)
-    trains[train] = type
+  def get_train(train)
+    trains.push(train)
     puts "Поезд встал на станции #{@name}"
   end
 end
@@ -84,12 +86,16 @@ class Train
     puts "Количество вагонов: #{@carriage_number}"
   end
 
-  def add_carriage(add_or_remove = true)
+  def add_carriage
     if @speed == 0
-      if add_or_remove 
-        @carriage_number += 1
-      else @carriage_number -= 1 if @carriage_number != 0
-      end
+      @carriage_number += 1
+    else puts "Операция невозможна, поезд в движении"
+    end
+  end
+
+  def remove_carriage
+    if @speed == 0
+      @carriage_number -= 1
     else puts "Операция невозможна, поезд в движении"
     end
   end
@@ -97,49 +103,91 @@ class Train
   def add_route(route)
     @route = route
     puts "Маршрут добавлен"
-    @route.first_station.get_train(@number, @type)
+    @route.first_station.get_train(self)
     @station_now = @route.first_station
   end
 
-  def go_next_station(forward_or_back)
-    if (forward_or_back && @station_now == @route.last_station) || (!forward_or_back && @station_now == @route.first_station)
-      puts "Движение в этом направлении невозможно, конечная станция"
-      return
-    end
-    @route.middle_stations.unshift(@route.first_station)
-    @route.middle_stations.push(@route.last_station)
-    if forward_or_back
-      @route.middle_stations.each do |station|
-        if station == @station_now
-          @route.middle_stations[@route.middle_stations.index(station)].remove_train(@number)
-          @route.middle_stations[@route.middle_stations.index(station) + 1].get_train(@number, @type)
-          @station_now = @route.middle_stations[@route.middle_stations.index(station) + 1]
-          break
-        end
+  def go_next_station
+    if @station_now == @route.first_station 
+      if @route.middle_stations.size != 0
+        @route.first_station.remove_train(self)
+        @route.middle_stations[0].get_train(self)
+        @station_now = @route.middle_stations[0]
+      else
+        @route.first_station.remove_train(self)
+        @route.last_station.get_train(self)
+        @station_now = @route.last_station
       end
-    else
-      @route.middle_stations.each do |station|
-        if station == @station_now
-          @route.middle_stations[@route.middle_stations.index(station)].remove_train(@number)
-          @route.middle_stations[@route.middle_stations.index(station) - 1].get_train(@number, @type)
-          @station_now = @route.middle_stations[@route.middle_stations.index(station) - 1]
-          break
-        end
+    elsif @station_now != @route.first_station && @station_now != @route.last_station
+      if @station_now != @route.middle_stations[@route.middle_stations.size - 1]
+        @route.middle_stations[@route.middle_stations.index(@station_now)].remove_train(self)
+        @route.middle_stations[@route.middle_stations.index(@station_now) + 1].get_train(self)
+        @station_now = @route.middle_stations[@route.middle_stations.index(@station_now) + 1]
+      else
+        @route.middle_stations[@route.middle_stations.size - 1].remove_train(self)
+        @route.last_station.get_train(self)
+        @station_now = @route.last_station
       end
+    elsif @station_now == @route.last_station
+      puts "Движение по направлению невозможно, данная станция - конечная"
     end
-    @route.middle_stations.delete(@route.first_station)
-    @route.middle_stations.delete(@route.last_station)
+  end
+
+  def go_previous_station
+    if @station_now == @route.last_station 
+      if @route.middle_stations.size != 0
+        @route.last_station.remove_train(self)
+        @route.middle_stations[@route.middle_stations.size - 1].get_train(self)
+        @station_now = @route.middle_stations[@route.middle_stations.size - 1]
+      else
+        @route.last_station.remove_train(self)
+        @route.first_station.get_train(self)
+        @station_now = @route.first_station
+      end
+    elsif @station_now != @route.first_station && @station_now != @route.last_station
+      if @station_now != @route.middle_stations[0]
+        @route.middle_stations[@route.middle_stations.index(@station_now)].remove_train(self)
+        @route.middle_stations[@route.middle_stations.index(@station_now) - 1].get_train(self)
+        @station_now = @route.middle_stations[@route.middle_stations.index(@station_now) - 1]
+      else
+        @route.middle_stations[0].remove_train(self)
+        @route.first_station.get_train(self)
+        @station_now = @route.first_station
+      end
+    elsif @station_now == @route.first_station
+      puts "Движение обратно направлению невозможно, данная станция - конечная"
+    end
   end
 
   def stations_info
     puts "Текущая станция: #{@station_now.name}"
-    @route.middle_stations.unshift(@route.first_station)
-    @route.middle_stations.push(@route.last_station)
-    @route.middle_stations.each do |station|
-      puts "Предыдущая по направлению станция: #{@route.middle_stations[@route.middle_stations.index(station) - 1].name}" if station == @station_now && @route.middle_stations[@route.middle_stations.index(station) - 1] != @route.last_station
-      puts "Следующая по направлению станция: #{@route.middle_stations[@route.middle_stations.index(station) + 1].name}" if station == @station_now && !@route.middle_stations[@route.middle_stations.index(station) + 1].nil?
+
+    if @station_now == @route.first_station 
+      if @route.middle_stations.size != 0
+        puts "Следующая по направлению станция: #{@route.middle_stations[0].name}"
+      else
+        puts "Следующая по направлению станция: #{@route.last_station.name}"
+      end
+    elsif @station_now != @route.first_station && @station_now != @route.last_station
+      if @station_now != @route.middle_stations[@route.middle_stations.size - 1]
+        puts "Следующая по направлению станция: #{@route.middle_stations[@route.middle_stations.index(@station_now) + 1].name}"
+      else
+        puts "Следующая по направлению станция: #{@route.last_station.name}"
+      end
     end
-    @route.middle_stations.delete(@route.first_station)
-    @route.middle_stations.delete(@route.last_station)
+
+    if @station_now == @route.last_station 
+      if @route.middle_stations.size != 0
+        puts "Предыдущая по направлению станция: #{@route.middle_stations[@route.middle_stations.size - 1].name}"
+      else
+        puts "Предыдущая по направлению станция: #{@route.first_station.name}"
+      end
+    elsif @station_now != @route.first_station && @station_now != @route.last_station
+      if @station_now != @route.middle_stations[0]
+        puts "Предыдущая по направлению станция: #{@route.middle_stations[@route.middle_stations.index(@station_now) - 1].name}"
+      else
+        puts "Предыдущая по направлению станция: #{@route.first_station.name}"
+      end
+    end
   end
 end
