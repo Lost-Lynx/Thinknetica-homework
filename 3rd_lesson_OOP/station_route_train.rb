@@ -1,6 +1,6 @@
 class Station
-  attr_accessor :trains
-  attr_accessor :name
+  attr_reader :trains
+  attr_reader :name
 
   def initialize(name)
     @name = name
@@ -8,11 +8,11 @@ class Station
   end
 
   def trains_list
-    return @trains.map{|train| train.number}
+    @trains
   end
 
   def trains_type_count(type)
-    return @trains.map{|train| train.number if train.type == type}
+    @trains.map{|train| train if train.type == type}
   end
 
   def remove_train(train)
@@ -49,9 +49,10 @@ class Route
 end
 
 class Train
-  attr_accessor :number
-  attr_accessor :type
-  attr_accessor :carriage_number
+  attr_reader :number
+  attr_reader :type
+  attr_reader :carriage_number
+  attr_reader :station_now
 
   def initialize(number, type, carriage_number)
     @number = number
@@ -95,13 +96,21 @@ class Train
     @station_now = @route.stations[0]
   end
 
+  def previous_station
+    @route.stations[@route.stations.index(@station_now) - 1]
+  end
+
+  def next_station
+    @route.stations[@route.stations.index(@station_now) + 1]
+  end
+
   def go_next_station
     if @route.stations[@route.stations.size - 1] == @station_now
       puts "Движение по направлению невозможно, данная станция - конечная"
     else
       @route.stations[@route.stations.index(@station_now)].remove_train(self)
-      @route.stations[@route.stations.index(@station_now) + 1].get_train(self)
-      @station_now = @route.stations[@route.stations.index(@station_now) + 1]
+      next_station().get_train(self)
+      @station_now = next_station()
     end
   end
 
@@ -110,21 +119,16 @@ class Train
       puts "Движение обратно направлению невозможно, данная станция - конечная"
     else
       @route.stations[@route.stations.index(@station_now)].remove_train(self)
-      @route.stations[@route.stations.index(@station_now ) - 1].get_train(self)
-      @station_now = @route.stations[@route.stations.index(@station_now) - 1]
+      previous_station().get_train(self)
+      @station_now = previous_station()
     end
   end
 
-  def stations_info
-    next_station = ""
-    previous_station = ""
-    if @route.stations[0] != @station_now
-      previous_station = "Предыдущая станция: #{@route.stations[@route.stations.index(@station_now) - 1].name}. "
-    end
-    if @route.stations[@route.stations.size - 1] != @station_now
-      next_station = "Следующая станция: #{@route.stations[@route.stations.index(@station_now) + 1].name}. "
-    end
-    this_station = "Текущая станция: #{@station_now.name}. "
-    return previous_station + this_station + next_station
+  def next_station_info
+    next_station() if @route.stations[@route.stations.size - 1] != @station_now
+  end
+
+  def previous_station_info
+    previous_station() if @route.stations[0] != @station_now
   end
 end
