@@ -1,5 +1,4 @@
 class Station
-  attr_reader :trains
   attr_reader :name
 
   def initialize(name)
