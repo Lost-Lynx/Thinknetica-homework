@@ -103,17 +103,13 @@ class Train
     @route.stations[@route.stations.index(@station_now) + 1]
   end
 
-  def this_station
-    @route.stations[@route.stations.index(@station_now)]
-  end
-
   def go_next_station
     if @route.stations[@route.stations.size - 1] == @station_now
       puts "Движение по направлению невозможно, данная станция - конечная"
     else
-      this_station().remove_train(self)
-      next_station().get_train(self)
-      @station_now = next_station()
+      @station_now.remove_train(self)
+      next_station.get_train(self)
+      @station_now = next_station
     end
   end
 
@@ -121,17 +117,17 @@ class Train
     if @route.stations[0] == @station_now
       puts "Движение обратно направлению невозможно, данная станция - конечная"
     else
-      this_station().remove_train(self)
-      previous_station().get_train(self)
-      @station_now = previous_station()
+      @station_now.remove_train(self)
+      previous_station.get_train(self)
+      @station_now = previous_station
     end
   end
 
   def next_station_info
-    next_station() if @route.stations[@route.stations.size - 1] != @station_now
+    next_station if @route.stations[@route.stations.size - 1] != @station_now
   end
 
   def previous_station_info
-    previous_station() if @route.stations[0] != @station_now
+    previous_station if @route.stations[0] != @station_now
   end
 end
