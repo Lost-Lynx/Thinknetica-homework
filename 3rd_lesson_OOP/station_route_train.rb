@@ -1,17 +1,14 @@
 class Station
   attr_reader :name
+  attr_reader :trains
 
   def initialize(name)
     @name = name
     @trains = []
   end
 
-  def trains_list
-    @trains
-  end
-
   def trains_type_count(type)
-    @trains.map{|train| train if train.type == type}
+    @trains.select{|train| train.type == type}
   end
 
   def remove_train(train)
@@ -96,6 +93,7 @@ class Train
   end
 
   def previous_station
+    return if @route.stations[0] == @station_now
     @route.stations[@route.stations.index(@station_now) - 1]
   end
 
@@ -104,30 +102,16 @@ class Train
   end
 
   def go_next_station
-    if @route.stations[@route.stations.size - 1] == @station_now
-      puts "Движение по направлению невозможно, данная станция - конечная"
-    else
-      @station_now.remove_train(self)
-      next_station.get_train(self)
-      @station_now = next_station
-    end
+    return if next_station.nil?
+    @station_now.remove_train(self)
+    next_station.get_train(self)
+    @station_now = next_station
   end
 
   def go_previous_station
-    if @route.stations[0] == @station_now
-      puts "Движение обратно направлению невозможно, данная станция - конечная"
-    else
-      @station_now.remove_train(self)
-      previous_station.get_train(self)
-      @station_now = previous_station
-    end
-  end
-
-  def next_station_info
-    next_station if @route.stations[@route.stations.size - 1] != @station_now
-  end
-
-  def previous_station_info
-    previous_station if @route.stations[0] != @station_now
+    return if previous_station.nil?
+    @station_now.remove_train(self)
+    previous_station.get_train(self)
+    @station_now = previous_station
   end
 end
