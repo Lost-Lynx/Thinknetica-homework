@@ -6,13 +6,17 @@ class Route
   #все методы ниже public, т.к. могут вызываться юзером
 
   def add_station(station)
-    @stations.insert(@stations.size - 1, station)
-    puts "Станция добавлена в маршрут"
+    if !@stations.include?(station)
+      @stations.insert(@stations.size - 1, station)
+    else
+      puts "Введенная станция уже существует в маршруте: #{@stations.map{|s| s.name}}"
+    end
+    puts "Станция добавлена в маршрут #{@stations.first} - #{@stations.last}"
   end
 
   def remove_station(station)
-    @stations.delete(station) if middle_stations.include?(station)
-    puts "Станция удалена"
+    @stations.delete(station)
+    puts "Станция удалена из маршрута #{@stations.first} - #{@stations.last}"
   end
 
   def stations_list

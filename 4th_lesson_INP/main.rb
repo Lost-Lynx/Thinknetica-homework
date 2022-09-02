@@ -11,18 +11,25 @@ trains = []
 routes = []
 
 loop do
-  puts "0 - Выход \n1 - Создать станцию\n2 - Создать поезд \n3 - Создать/редактировать маршрут \n4 - Действия с поездами \n5 - Информация о станциях"
+  puts "0 - Выход \n1 - Создание станций\n2 - Создание поездов \n3 - Создание/редактирование маршрутов \n4 - Действия с поездами \n5 - Информация о станциях"
   menu_value = gets.chomp.to_i
 
   case menu_value
   when 0
     break
   when 1
-    puts 'Введите название станции: '
-    name = gets.chomp
-    station = Station.new(name)
-    stations.push(station)
-    puts "Станция создана"
+    loop do
+      puts 'Введите название станции, 0 - выход: '
+      station_name = gets.chomp
+      break if station_name == '0'
+      if stations.map{|s| s.name}.include?(station_name)
+        puts "Нельзя создать станцию с уже существующиим названием"
+        next
+      end
+      station = Station.new(station_name)
+      stations.push(station)
+      puts "Станция создана"
+    end
   when 2
     loop do
       puts 'Введите тип поезда: 1 - грузовой, 2 - пассажирский, 0 - выход: '
@@ -40,38 +47,91 @@ loop do
       if !train.nil?
         trains.push(train)
         puts "Поезд создан"
-        break
       end
     end
   when 3
-    puts "Назначьте маршруту начальную и конечную станцию из списка существующих: #{stations.map{|s| s.name}}, 0 - выход"
     loop do
-      first_station = nil
-      loop do
-        puts 'Введите название начальной станции: '
-        first_station = gets.chomp
-        if stations.map{|s| s.name}.include?(first_station) || first_station == '0'
+      puts "Выберите действие с маршрутами: 1 - создать, 2 - редактировать, 0 - выход"
+      route_menu_value = gets.chomp.to_i
+      case route_menu_value
+      when 0
+        break
+      when 1
+        loop do
+          puts "Назначьте маршруту начальную и конечную станцию из списка существующих: #{stations.map{|s| s.name}}, 0 - выход"
+          first_station = nil
+          loop do
+            puts 'Введите название начальной станции: '
+            first_station = gets.chomp
+            if stations.map{|s| s.name}.include?(first_station) || first_station == '0'
+              break
+            else
+              puts 'Введенной станции в списке существующих не найдено, повторите попытку'
+            end
+          end
+          break if first_station == '0'
+          last_station = nil
+          loop do
+            puts 'Введите название конечной станции: '
+            last_station = gets.chomp
+            if stations.map{|s| s.name}.include?(last_station) || last_station == '0'
+              break
+            else
+              puts 'Введенной станции в списке существующих не найдено, повторите попытку'
+            end
+          end
+          break if last_station == '0'
+          route = Route.new(stations.select{|s| s.name == first_station}.first, stations.select{|s| s.name == last_station}.first)
+          routes.push(route)
+          puts "Маршрут создан"
           break
-        else
-          puts 'Введенной станции в списке существующих не найдено, повторите попытку'
+        end
+      when 2
+        route = nil
+        loop do
+          puts "Выберите маршрут: #{routes.map{|r| "ID: #{r.id}, #{r.stations.first.name}-#{r.stations.last.name}"}}, 0 - выход"
+          puts 'Введите ID маршрута: '
+          route_id = gets.chomp.to_i
+          break if route_id == 0
+          if !routes.map{|r| r.id}.include?(route_id)
+            puts 'Введенного маршрута в списке существующих не найдено, повторите попытку'
+            next
+          end
+          route = routes.select{|r| r.id == route_id}.first
+          break
+        end
+        loop do
+          puts "Выберите действие со станциями: 1 - добавить, 2 - удалить, 0 - выход"
+          route_edit_manu_value = gets.chomp.to_i
+          case route_edit_manu_value
+          when 0
+            break
+          when 1
+            puts "Выберите станцию для добавления: #{stations.map{|s| s.name}}, 0 - выход"
+            station_name = gets.chomp
+            station = stations.select{|s| s.name == station_name}.first
+            if station.nil?
+              puts "Введенной станции в списке существующих не найдено, повторите попытку"
+              next
+            end
+            route.add_station(station)
+            puts "Станция добавлена в маршрут: #{route.stations.map{|s| s.name}}"
+          when 2
+            puts "Выберите станцию для удаления: #{route.stations.map{|s| s.name}}, 0 - выход"
+            station_name = gets.chomp
+            station = stations.select{|s| s.name == station_name}.first
+            if route.stations.size == 0
+              puts "Введеной станции не найдено, маршрут пустой"
+              next
+            elsif station.nil?
+              puts "Введенной станции в списке маршрута #{route.stations.first.name} - #{route.stations.last.name} не найдено, повторите попытку"
+              next
+            end
+            route.remove_station(station)
+            puts "Станция удалена из маршрута: #{route.stations.map{|s| s.name}}"
+          end
         end
       end
-      break if first_station == '0'
-      last_station = nil
-      loop do
-        puts 'Введите название конечной станции: '
-        last_station = gets.chomp
-        if stations.map{|s| s.name}.include?(last_station) || last_station == '0'
-          break
-        else
-          puts 'Введенной станции в списке существующих не найдено, повторите попытку'
-        end
-      end
-      break if last_station == '0'
-      route = Route.new(stations.select{|s| s.name == first_station}.first, stations.select{|s| s.name == last_station}.first)
-      routes.push(route)
-      puts "Маршрут создан"
-      break
     end
   when 4
     loop do
@@ -84,7 +144,7 @@ loop do
         next
       end
       loop do
-        puts "Выберите действие с поездом: 1 - назначить маршрут, 2 - добавление/удаление вагонов, 3 - перемещение, 0 - выход"
+        puts "Выберите действие с поездом: 1 - назначение маршрута, 2 - добавление/удаление вагонов, 3 - перемещение, 0 - выход"
         train_menu_value = gets.chomp.to_i
         case train_menu_value
         when 0

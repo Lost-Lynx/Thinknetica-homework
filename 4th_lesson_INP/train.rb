@@ -18,6 +18,7 @@ class Train
 
   def add_carriage(carriage)
     # if @speed == 0
+      carriage.set_number(@carriages.count + 1)
       @carriages.push(carriage)
     # else puts "Операция невозможна, поезд в движении"
     # end
@@ -35,10 +36,11 @@ class Train
   end
 
   def add_route(route)
+    @route.stations.select{|s| s == @station_now}.first.remove_train(self) if !@route.nil?
     @route = route
-    puts "Маршрут добавлен"
     @route.stations[0].get_train(self)
     @station_now = @route.stations[0]
+    puts "Маршрут добавлен"
   end
 
   def go_next_station
