@@ -16,14 +16,6 @@ class Train
   #   puts "Остановка совершена"
   # end
 
-  def add_carriage(carriage)
-    # if @speed == 0
-      carriage.set_number(@carriages.count + 1)
-      @carriages.push(carriage)
-    # else puts "Операция невозможна, поезд в движении"
-    # end
-  end
-
   def remove_carriage
     # if @speed == 0
       if carriages.count != 0

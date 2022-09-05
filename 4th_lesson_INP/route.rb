@@ -8,15 +8,16 @@ class Route
   def add_station(station)
     if !@stations.include?(station)
       @stations.insert(@stations.size - 1, station)
+      puts "Станция добавлена в маршрут #{@stations.first} - #{@stations.last}"
     else
       puts "Введенная станция уже существует в маршруте: #{@stations.map{|s| s.name}}"
+      return nil
     end
-    puts "Станция добавлена в маршрут #{@stations.first} - #{@stations.last}"
   end
 
   def remove_station(station)
     @stations.delete(station)
-    puts "Станция удалена из маршрута #{@stations.first} - #{@stations.last}"
+    puts "Станция удалена из маршрута: #{@stations.first} - #{@stations.last}"
   end
 
   def stations_list
