@@ -1,3 +1,3 @@
-require_relative 'interface_RZHD.rb'
+require_relative 'interface.rb'
 
-InterfaceRZHD.new.call
+Interface.new.call
