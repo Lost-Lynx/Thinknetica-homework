@@ -60,7 +60,7 @@ class Train
   end
 
   def self.find(number)
-    @@all.select{|t| t.number == number}.first      #Задание 4
+    @@all.find{|t| t.number == number}     #Задание 4
   end
 
   protected #данные методы используются только внутри класса, притом они могут использоваться в дочерних классах

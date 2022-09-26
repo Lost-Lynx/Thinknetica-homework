@@ -9,8 +9,6 @@ class Station
   attr_reader :name
   attr_reader :trains
   @@all = []
-  @@instance_count = 0
-  attr_accessor :instance_count
 
   #все методы ниже public, т.к. могут вызываться юзером
 
@@ -44,6 +42,6 @@ class Station
     @name = name
     @trains = []
     @@all.push(self)
-    register_instance(@@instance_count)
+    register_instance
   end
 end

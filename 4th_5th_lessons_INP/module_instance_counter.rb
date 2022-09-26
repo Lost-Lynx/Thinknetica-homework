@@ -1,3 +1,5 @@
+require 'active_support/all'
+
 module InstanceCounter
 
   def self.included(base)
@@ -6,16 +8,14 @@ module InstanceCounter
   end
 
   module ClassMethods
-    def instances
-      # self.class.instance_count
-    end
+    cattr_accessor :instance
+    @@instance = 0
 
   end
 
   module InstanceMethods
-    def register_instance(instance_count)
-      instance_count += 1
-      instance_count
+    def register_instance
+      self.class.instance += 1
     end
   end
 
