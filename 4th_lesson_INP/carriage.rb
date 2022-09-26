@@ -1,4 +1,7 @@
+require_relative 'module_company.rb'            #Задание 1
+
 class Carriage
+  include Company
   attr_reader :number
   @@numbers = 0
 

@@ -1,8 +1,12 @@
+require_relative 'module_company.rb'               #Задание 1
+
 class Train
-  attr_reader :number
+  include Company
+  attr_reader :number                           #Задание 3
   attr_reader :route
   attr_reader :station_now
   attr_reader :carriages
+  @@all = []
 
   #все методы ниже public, т.к. могут вызываться юзером
 
@@ -55,12 +59,17 @@ class Train
     @station_now = previous_station
   end
 
+  def self.find(number)
+    @@all.select{|t| t.number == number}.first      #Задание 4
+  end
+
   protected #данные методы используются только внутри класса, притом они могут использоваться в дочерних классах
 
   def initialize(number)
     @number = number
     @carriages = []
     # @speed = 0
+    @@all.push(self)
   end
 
   def previous_station
