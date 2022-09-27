@@ -1,4 +1,7 @@
+require_relative 'module_instance_counter.rb'
+
 class Route
+  include InstanceCounter                    ###Задание 5
   attr_accessor :stations
   attr_reader :id
   @@count = 0
@@ -30,5 +33,6 @@ class Route
     @@count += 1
     @id = @@count
     @stations = [first_station, last_station]
+    register_instance
   end
 end

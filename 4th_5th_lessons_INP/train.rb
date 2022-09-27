@@ -1,6 +1,8 @@
 require_relative 'module_company.rb'               #Задание 1
+require_relative 'module_instance_counter.rb'
 
 class Train
+  include InstanceCounter                      ###Задание 5
   include Company
   attr_reader :number                           #Задание 3
   attr_reader :route
@@ -60,7 +62,7 @@ class Train
   end
 
   def self.find(number)
-    @@all.find{|t| t.number == number}     #Задание 4
+    @@all.find{ |t| t.number == number }     #Задание 4
   end
 
   protected #данные методы используются только внутри класса, притом они могут использоваться в дочерних классах
@@ -70,6 +72,7 @@ class Train
     @carriages = []
     # @speed = 0
     @@all.push(self)
+    register_instance
   end
 
   def previous_station

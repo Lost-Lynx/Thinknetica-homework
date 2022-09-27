@@ -1,5 +1,3 @@
-require 'active_support/all'
-
 module InstanceCounter
 
   def self.included(base)
@@ -8,8 +6,7 @@ module InstanceCounter
   end
 
   module ClassMethods
-    cattr_accessor :instance
-    @@instance = 0
+    @instance || 0
 
   end
 

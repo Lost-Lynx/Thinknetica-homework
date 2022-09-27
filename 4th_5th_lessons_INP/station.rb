@@ -1,10 +1,7 @@
 require_relative 'module_instance_counter.rb'
 
 class Station
-  include InstanceCounter###Задание 5 - не доделано: не знаю как сделать так,
-                          ### чтобы в метод instances прилетала переменная класса, чтобы выводить этот метод без параметра, вот так - Station.instances,
-                          ### только если в самом классе создавать отдельный метод, чтобы вызывать этот метод в модуле с параметром,
-                          ### но, мне кажется, проще этот метод в модуле вообще не иметь
+  include InstanceCounter                      ###Задание 5
 
   attr_reader :name
   attr_reader :trains
