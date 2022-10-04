@@ -4,6 +4,7 @@ require_relative 'module_instance_counter.rb'
 class Train
   include InstanceCounter                      ###Задание 5
   include Company
+
   attr_reader :number                           #Задание 3
   attr_reader :route
   attr_reader :station_now

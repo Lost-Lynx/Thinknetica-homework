@@ -1,21 +1,20 @@
-require 'active_support/all'
-module InstanceCounter
-
+module InstanceCounter 
   def self.included(base)
     base.extend ClassMethods
-    base.include InstanceMethods
+    base.send :include, InstanceMethods
   end
 
   module ClassMethods
-    cattr_accessor :instance
-    @@instance = 0 
+    attr_accessor :instances
 
   end
 
   module InstanceMethods
+    protected
+
     def register_instance
-      self.class.instance += 1
+      self.class.instances ||= 0
+      self.class.instances += 1
     end
   end
-
 end
