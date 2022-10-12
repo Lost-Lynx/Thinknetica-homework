@@ -1,8 +1,11 @@
-require_relative 'module_company.rb'               #Задание 1
+require_relative 'module_company.rb' 
+require_relative 'module_instance_counter.rb'
 
 class Train
+  include InstanceCounter
   include Company
-  attr_reader :number                           #Задание 3
+
+  attr_reader :number
   attr_reader :route
   attr_reader :station_now
   attr_reader :carriages
@@ -60,16 +63,29 @@ class Train
   end
 
   def self.find(number)
-    @@all.select{|t| t.number == number}.first      #Задание 4
+    @@all.find{ |t| t.number == number }
+  end
+
+  def valid?(number)                                       #Задание 1
+    validation!
+  rescue
+    false
   end
 
   protected #данные методы используются только внутри класса, притом они могут использоваться в дочерних классах
 
   def initialize(number)
     @number = number
+    validation!                                       #Задание 2
     @carriages = []
     # @speed = 0
     @@all.push(self)
+    register_instance
+  end
+
+  def validation!
+    puts number
+    raise "Uncorrect form" if number !~ /^[\w\d]{3}\-[\w\d]{2}$/
   end
 
   def previous_station

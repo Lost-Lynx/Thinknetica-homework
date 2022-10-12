@@ -1,4 +1,8 @@
+require_relative 'module_instance_counter.rb'
+
 class Route
+  include InstanceCounter                    ###Задание 5
+  
   attr_accessor :stations
   attr_reader :id
   @@count = 0
@@ -24,11 +28,25 @@ class Route
     puts @stations.map{|station| station.name}
   end
 
+  def valid?                      #Задание 1
+    validate!
+    true
+  rescue 
+    false
+  end
+
   protected #методы ниже не должны вызываться юзером, но могут вызываться из дочерних классов
 
   def initialize(first_station, last_station)
     @@count += 1
     @id = @@count
     @stations = [first_station, last_station]
+    validate!                       #Задание 1
+    register_instance
+  end
+
+  def validate!
+    raise "Uncorrect form" if @stations.first !~ /^[A-Z]{1}[a-z]+/ || @stations.last !~ /^[A-Z]{1}[a-z]+/
+
   end
 end

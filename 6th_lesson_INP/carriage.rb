@@ -13,6 +13,7 @@ class Carriage
 
   def initialize
     @@numbers += 1
-    @number = @@numbers
+    @number = @@numbers            #не стал делать проверки, т.к. параметры не предусмотрены
   end
+
 end
