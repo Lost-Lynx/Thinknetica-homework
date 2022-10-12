@@ -37,21 +37,26 @@ class Interface
         if choose != 0
           puts "Введите номер поезда"
           train_number = gets.chomp
-          if train_number !~ /^[\w\d]{3}\-[\w\d]{2}$/              ###############Задание 4
-            puts "Введена некорректная форма номера, повторите попытку, используя шаблон \"***-**\" (англ. символы и цифры)"
-            next
-          end
+          # if train_number !~ /^[\w\d]{3}\-[\w\d]{2}$/              ###############Задание 4
+          #   puts "Введена некорректная форма номера, повторите попытку, используя шаблон \"***-**\" (англ. символы и цифры)"
+          #   next
+          # end
           train = nil
         end
-        case choose
-        when 0
+        begin
+          case choose
+            when 0
+              next
+            when 1
+              train = CargoTrain.new(train_number)
+            when 2
+              train = PassTrain.new(train_number)
+            else
+              puts 'Введено некорректное значение, повторите попытку'
+          end
+        rescue 
+          puts "Введена некорректная форма номера, повторите попытку, используя шаблон \"***-**\" (англ. символы и цифры)" 
           next
-        when 1
-          train = CargoTrain.new(train_number)
-        when 2
-          train = PassTrain.new(train_number)
-        else
-          puts 'Введено некорректное значение, повторите попытку'
         end
         unless train.nil?
           trains.push(train)
