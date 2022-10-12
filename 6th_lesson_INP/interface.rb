@@ -34,12 +34,12 @@ class Interface
       when 2
         puts "Введите тип поезда: 1 - грузовой, 2 - пассажирский\nВведите 0 для выхода"
         choose = gets.chomp.to_i
-        if choose != 0
-          puts "Введите номер поезда"
-          train_number = gets.chomp
-          train = nil
-        end
         begin                             ###############Задание 4
+          if choose != 0
+            puts "Введите номер поезда"
+            train_number = gets.chomp
+            train = nil
+          end
           case choose
             when 0
               next
@@ -52,7 +52,7 @@ class Interface
           end
         rescue 
           puts "Введена некорректная форма номера, повторите попытку, используя шаблон \"***-**\" (англ. символы и цифры)" 
-          next
+          retry
         end
         unless train.nil?
           trains.push(train)
