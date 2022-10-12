@@ -1,4 +1,4 @@
-require_relative 'module_company.rb'            #Задание 1
+require_relative 'module_company.rb' 
 
 class Carriage
   include Company
